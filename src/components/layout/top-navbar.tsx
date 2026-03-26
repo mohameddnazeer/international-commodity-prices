@@ -14,9 +14,9 @@ export const TopNavbar = ({ title, search, onSearchChange }: TopNavbarProps) => 
     <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
       <h1 className="text-right text-xl font-semibold tracking-tight">{title}</h1>
       <div className="flex items-center gap-2">
-        <div className="w-full md:w-80">
+        {/* <div className="w-full md:w-80">
           <SearchInput value={search} onChange={onSearchChange} />
-        </div>
+        </div> */}
         <ThemeToggle />
       </div>
     </div>

@@ -142,6 +142,7 @@ export const CommodityTable = ({
   );
 
   const [hiddenColumnKeys, setHiddenColumnKeys] = useState<string[]>([]);
+  const [hasLoadedColumns, setHasLoadedColumns] = useState(false);
   const storageKey = useMemo(
     () => `${COLUMNS_STORAGE_PREFIX}${title}:${showImageColumn ? "image" : "no-image"}`,
     [showImageColumn, title],
@@ -152,22 +153,28 @@ export const CommodityTable = ({
       return;
     }
 
+    setHasLoadedColumns(false);
+
     try {
       const saved = window.localStorage.getItem(storageKey);
       if (!saved) {
         setHiddenColumnKeys([]);
+        setHasLoadedColumns(true);
         return;
       }
 
       const parsed = JSON.parse(saved);
       if (Array.isArray(parsed)) {
         setHiddenColumnKeys(parsed.filter((item): item is string => typeof item === "string"));
+        setHasLoadedColumns(true);
         return;
       }
 
       setHiddenColumnKeys([]);
+      setHasLoadedColumns(true);
     } catch {
       setHiddenColumnKeys([]);
+      setHasLoadedColumns(true);
     }
   }, [storageKey]);
 
@@ -182,8 +189,12 @@ export const CommodityTable = ({
       return;
     }
 
+    if (!hasLoadedColumns) {
+      return;
+    }
+
     window.localStorage.setItem(storageKey, JSON.stringify(hiddenColumnKeys));
-  }, [hiddenColumnKeys, storageKey]);
+  }, [hasLoadedColumns, hiddenColumnKeys, storageKey]);
 
   const hiddenSet = useMemo(() => new Set(hiddenColumnKeys), [hiddenColumnKeys]);
   const isVisible = (key: string) => !hiddenSet.has(key);
