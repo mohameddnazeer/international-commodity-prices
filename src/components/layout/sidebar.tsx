@@ -25,6 +25,7 @@ export const Sidebar = () => {
         >
           لوحة المعلومات
         </Link>
+       
         {CATEGORIES.map((category) => {
           const href = `/category/${category.slug}`;
           const isActive = pathname === href;
@@ -42,6 +43,16 @@ export const Sidebar = () => {
             </Link>
           );
         })}
+         <Link
+          href="/report"
+          className={`rounded-xl px-3 py-2 text-sm font-medium transition ${
+            pathname === "/report"
+              ? "bg-indigo-500 text-white"
+              : "text-zinc-700 hover:bg-zinc-100 dark:text-zinc-200 dark:hover:bg-zinc-900"
+          }`}
+        >
+          تقرير PDF
+        </Link>
       </nav>
     </aside>
   );

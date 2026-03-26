@@ -6,7 +6,7 @@ import {
 } from "@/types/api";
 import { CategorySlug, CommodityRecord } from "@/types/domain";
 import { getTrendByPercent, toIsoDate } from "@/utils/format";
-import { internalApi } from "./axios";
+import { externalApi, internalApi } from "./axios";
 
 const IMAGE_BASE_URL = "http://admin.prices.idsc.gov.eg/Upload/MainIndicator/Image";
 
@@ -116,14 +116,35 @@ export const getInternationalData = async () => {
   return mapInternationalRows(data);
 };
 
+export const getInternationalDataDirect = async () => {
+  const { data } = await externalApi.get<InternationalGroupApi[]>(
+    "/GetInnerInternationalData",
+  );
+  return mapInternationalRows(data);
+};
+
 export const getFertilizersData = async () => {
   const { data } =
     await internalApi.get<GeneralIndicatorResponseApi>("/fertilizers");
   return mapGeneralRows("fertilizers", data);
 };
 
+export const getFertilizersDataDirect = async () => {
+  const { data } = await externalApi.get<GeneralIndicatorResponseApi>(
+    "/GetGeneralIndicatorAllData/19",
+  );
+  return mapGeneralRows("fertilizers", data);
+};
+
 export const getSteelData = async () => {
   const { data } = await internalApi.get<GeneralIndicatorResponseApi>("/steel");
+  return mapGeneralRows("steel", data);
+};
+
+export const getSteelDataDirect = async () => {
+  const { data } = await externalApi.get<GeneralIndicatorResponseApi>(
+    "/GetGeneralIndicatorAllData/18",
+  );
   return mapGeneralRows("steel", data);
 };
 
