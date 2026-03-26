@@ -208,7 +208,7 @@ const buildHtml = (input: {
           object-fit: contain;
         }
         .cover-authority {
-          text-align: left;
+          text-align: center;
           font-size: 13px;
           line-height: 1.8;
           color: #1e293b;
