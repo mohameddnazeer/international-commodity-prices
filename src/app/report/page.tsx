@@ -67,12 +67,12 @@ export default function ReportPage() {
   return (
     <div className="min-h-screen bg-zinc-50 text-zinc-900 dark:bg-zinc-950 dark:text-zinc-100">
       <div className="grid min-h-screen md:grid-cols-[16rem_1fr]">
-        <div>
+        <div className="">
           <Sidebar />
         </div>
-        <div>
+        <div className="min-w-0 overflow-hidden">
           <TopNavbar title="تقرير الأسعار" search="" onSearchChange={() => {}} />
-          <main className="space-y-6 px-4 py-5 md:px-6">
+          <main className="space-y-6 px-4 py-5 md:px-6 min-w-0">
             <section className="flex flex-col gap-3 rounded-2xl border border-zinc-200 bg-white p-4 shadow-sm dark:border-zinc-800 dark:bg-zinc-900 md:flex-row md:items-center md:justify-between">
               <div>
                 <h2 className="text-lg font-semibold">تقرير شامل لكل الفئات</h2>
@@ -130,6 +130,7 @@ export default function ReportPage() {
                   search=""
                   title={CATEGORY_MAP.international.title}
                   showImageColumn
+                  includeChangePercent={false}
                 />
                 <CommodityTable
                   rows={data.fertilizers}

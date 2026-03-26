@@ -19,16 +19,16 @@ export const CategoryPage = ({ slug }: { slug: CategorySlug }) => {
   return (
     <div className="min-h-screen bg-zinc-50 text-zinc-900 dark:bg-zinc-950 dark:text-zinc-100">
       <div className="grid min-h-screen md:grid-cols-[16rem_1fr]">
-        <div>
+        <div className="min-w-0">
           <Sidebar />
         </div>
-        <div>
+        <div className="min-w-0 overflow-hidden">
           <TopNavbar
             title={CATEGORY_MAP[slug].title}
             search={search}
             onSearchChange={setSearch}
           />
-          <main className="px-4 py-5 md:px-6">
+          <main className="min-w-0 px-4 py-5 md:px-6">
             {isLoading ? <LoadingState rows={8} /> : null}
             {isError ? (
               <ErrorState
@@ -45,6 +45,7 @@ export const CategoryPage = ({ slug }: { slug: CategorySlug }) => {
                 search={debouncedSearch}
                 title={CATEGORY_MAP[slug].title}
                 showImageColumn={slug === "international"}
+                includeChangePercent={slug !== "international"}
               />
             ) : null}
           </main>

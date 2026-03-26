@@ -57,16 +57,16 @@ export const DashboardPage = () => {
   return (
     <div className="min-h-screen bg-zinc-50 text-zinc-900 dark:bg-zinc-950 dark:text-zinc-100">
       <div className="grid min-h-screen md:grid-cols-[16rem_1fr]">
-        <div>
+        <div className="min-w-0">
           <Sidebar />
         </div>
-        <div>
+        <div className="min-w-0 overflow-hidden">
           <TopNavbar
             title="لوحة متابعة أسعار السلع العالمية"
             search={search}
             onSearchChange={setSearch}
           />
-          <main className="space-y-6 px-4 py-5 md:px-6">
+          <main className="space-y-6 px-4 py-5 md:px-6 min-w-0">
             {isLoading ? <LoadingState /> : null}
             {isError ? (
               <ErrorState

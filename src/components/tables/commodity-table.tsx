@@ -20,6 +20,7 @@ interface CommodityTableProps {
   search: string;
   title: string;
   showImageColumn?: boolean;
+  includeChangePercent?: boolean;
 }
 
 const PAGE_SIZE = 10;
@@ -66,6 +67,7 @@ export const CommodityTable = ({
   search,
   title,
   showImageColumn = true,
+  includeChangePercent = true,
 }: CommodityTableProps) => {
   const [sortKey, setSortKey] = useState<SortKey>("date");
   const [sortDirection, setSortDirection] = useState<SortDirection>("desc");
@@ -131,14 +133,16 @@ export const CommodityTable = ({
       { key: "name", label: "الاسم" },
       { key: "marketScope", label: "النطاق" },
       { key: "currentPrice", label: "السعر الحالي" },
-      { key: "changePercent", label: "التغير" },
+      ...(includeChangePercent
+        ? ([{ key: "changePercent", label: "التغير" }] satisfies TableColumnMeta[])
+        : []),
       { key: "date", label: "التاريخ" },
       ...detailColumns.map((column) => ({
         key: `detail:${column.key}`,
         label: column.label,
       })),
     ],
-    [detailColumns, showImageColumn],
+    [detailColumns, includeChangePercent, showImageColumn],
   );
 
   const [hiddenColumnKeys, setHiddenColumnKeys] = useState<string[]>([]);
@@ -220,7 +224,7 @@ export const CommodityTable = ({
   };
 
   return (
-    <section className="rounded-2xl border border-zinc-200 bg-white p-4 shadow-sm dark:border-zinc-800 dark:bg-zinc-900">
+    <section className="w-full min-w-0 rounded-2xl border border-zinc-200 bg-white p-4 shadow-sm dark:border-zinc-800 dark:bg-zinc-900">
       <div className="mb-4 flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
         <h2 className="text-right text-lg font-semibold">{title}</h2>
         <details className="rounded-lg border border-zinc-200 bg-white px-3 py-2 dark:border-zinc-700 dark:bg-zinc-950">
@@ -248,15 +252,15 @@ export const CommodityTable = ({
         </details>
       </div>
 
-      <div className="overflow-x-auto">
-        <table className="min-w-full divide-y divide-zinc-200 text-sm dark:divide-zinc-800">
+      <div className="relative h-[60vh] w-full min-w-0 max-w-full overflow-x-auto overflow-y-auto">
+        <table className="w-max min-w-[1600px] divide-y divide-zinc-200 text-sm dark:divide-zinc-800">
           <thead>
-            <tr className="text-right text-zinc-500 dark:text-zinc-400">
+            <tr className="sticky top-0 z-10 bg-white text-right text-zinc-500 dark:bg-zinc-900 dark:text-zinc-400">
               {showImageColumn && isVisible("image") ? (
-                <th className="px-3 py-3">الصورة</th>
+                <th className="px-5 py-4 whitespace-nowrap">الصورة</th>
               ) : null}
               {isVisible("name") ? (
-                <th className="px-3 py-3">
+                <th className="px-5 py-4 whitespace-nowrap">
                   <button
                     type="button"
                     onClick={() => toggleSort("name")}
@@ -267,9 +271,9 @@ export const CommodityTable = ({
                   </button>
                 </th>
               ) : null}
-              {isVisible("marketScope") ? <th className="px-3 py-3">النطاق</th> : null}
+              {isVisible("marketScope") ? <th className="px-5 py-4 whitespace-nowrap">النطاق</th> : null}
               {isVisible("currentPrice") ? (
-                <th className="px-3 py-3">
+                <th className="px-5 py-4 whitespace-nowrap">
                   <button
                     type="button"
                     onClick={() => toggleSort("currentPrice")}
@@ -280,8 +284,8 @@ export const CommodityTable = ({
                   </button>
                 </th>
               ) : null}
-              {isVisible("changePercent") ? (
-                <th className="px-3 py-3">
+              {includeChangePercent && isVisible("changePercent") ? (
+                <th className="px-5 py-4 whitespace-nowrap">
                   <button
                     type="button"
                     onClick={() => toggleSort("changePercent")}
@@ -293,7 +297,7 @@ export const CommodityTable = ({
                 </th>
               ) : null}
               {isVisible("date") ? (
-                <th className="px-3 py-3">
+                <th className="px-5 py-4 whitespace-nowrap">
                   <button
                     type="button"
                     onClick={() => toggleSort("date")}
@@ -306,7 +310,7 @@ export const CommodityTable = ({
               ) : null}
               {detailColumns.map((column) => (
                 isVisible(`detail:${column.key}`) ? (
-                  <th key={column.key} className="px-3 py-3">
+                  <th key={column.key} className="px-5 py-4 whitespace-nowrap">
                     {column.label}
                   </th>
                 ) : null
@@ -320,7 +324,7 @@ export const CommodityTable = ({
                 className="transition hover:bg-zinc-50 dark:hover:bg-zinc-800/40"
               >
                 {showImageColumn && isVisible("image") ? (
-                  <td className="px-3 py-3">
+                  <td className="px-5 py-4 whitespace-nowrap">
                     {row.imagePath ? (
                       <Image
                         src={row.imagePath}
@@ -335,19 +339,19 @@ export const CommodityTable = ({
                   </td>
                 ) : null}
                 {isVisible("name") ? (
-                  <td className="px-3 py-3 font-medium">{row.name}</td>
+                  <td className="px-5 py-4 whitespace-nowrap font-medium">{row.name}</td>
                 ) : null}
                 {isVisible("marketScope") ? (
-                  <td className="px-3 py-3">{getMarketScopeLabel(row.marketScope)}</td>
+                  <td className="px-5 py-4 whitespace-nowrap">{getMarketScopeLabel(row.marketScope)}</td>
                 ) : null}
                 {isVisible("currentPrice") ? (
-                  <td className="px-3 py-3">
+                  <td className="px-5 py-4 whitespace-nowrap">
                     {formatCurrency(row.currentPrice, row.currency)} / {row.unit}
                   </td>
                 ) : null}
-                {isVisible("changePercent") ? (
+              {includeChangePercent && isVisible("changePercent") ? (
                   <td
-                    className={`px-3 py-3 ${
+                    className={`px-5 py-4 whitespace-nowrap ${
                       row.changePercent > 0
                         ? "text-emerald-600 dark:text-emerald-400"
                         : row.changePercent < 0
@@ -359,11 +363,11 @@ export const CommodityTable = ({
                   </td>
                 ) : null}
                 {isVisible("date") ? (
-                  <td className="px-3 py-3">{formatDate(row.date)}</td>
+                  <td className="px-5 py-4 whitespace-nowrap">{formatDate(row.date)}</td>
                 ) : null}
                 {detailColumns.map((column) => (
                   isVisible(`detail:${column.key}`) ? (
-                    <td key={`${row.id}-${column.key}`} className="px-3 py-3">
+                    <td key={`${row.id}-${column.key}`} className="px-5 py-4 whitespace-nowrap">
                       {formatUnknownValue(row.details[column.key] ?? null)}
                     </td>
                   ) : null
