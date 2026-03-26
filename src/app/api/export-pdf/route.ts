@@ -8,8 +8,11 @@ import { CommodityRecord } from "@/types/domain";
 import { promises as fs } from "fs";
 import { NextResponse } from "next/server";
 import path from "path";
+import puppeteerCore from "puppeteer-core";
+import chromium from "@sparticuz/chromium";
 import puppeteer from "puppeteer";
 
+export const maxDuration = 60; // Increase Vercel function timeout to 60s
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
@@ -361,7 +364,7 @@ const buildHtml = (input: {
 `;
 
 export async function GET() {
-  let browser: Awaited<ReturnType<typeof puppeteer.launch>> | null = null;
+  let browser: any = null;
 
   try {
     const [international, fertilizers, steel, logoBuffer] = await Promise.all([
@@ -385,9 +388,20 @@ export async function GET() {
       steel,
     });
 
-    browser = await puppeteer.launch({
-      headless: true,
-    });
+    const isDev = process.env.NODE_ENV === "development";
+
+    if (isDev) {
+      browser = await puppeteer.launch({
+        headless: true,
+      });
+    } else {
+      browser = await puppeteerCore.launch({
+        args: chromium.args,
+        defaultViewport: chromium.defaultViewport,
+        executablePath: await chromium.executablePath(),
+        headless: chromium.headless,
+      });
+    }
 
     const page = await browser.newPage();
     await page.setContent(html, { waitUntil: "networkidle0" });
@@ -410,13 +424,14 @@ export async function GET() {
         "Content-Disposition": 'attachment; filename="global-prices-report.pdf"',
       },
     });
-  } catch {
+  } catch (error) {
+    console.error("PDF Export Error:", error);
     if (browser) {
       await browser.close();
     }
 
     return NextResponse.json(
-      { message: "تعذر إنشاء ملف PDF حالياً." },
+      { message: "تعذر إنشاء ملف PDF حالياً.", error: String(error) },
       { status: 500 },
     );
   }
