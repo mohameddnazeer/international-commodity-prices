@@ -181,10 +181,13 @@ const buildHtml = (input: {
   <html lang="ar" dir="rtl">
     <head>
       <meta charset="UTF-8" />
+      <link rel="preconnect" href="https://fonts.googleapis.com">
+      <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+      <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&display=swap" rel="stylesheet">
       <style>
         body {
           margin: 0;
-          font-family: Tahoma, Arial, sans-serif;
+          font-family: 'Cairo', Tahoma, Arial, sans-serif;
           color: #111827;
           background: #ffffff;
         }
@@ -408,6 +411,10 @@ export async function GET() {
 
     const page = await browser.newPage();
     await page.setContent(html, { waitUntil: "networkidle0" });
+    
+    // Ensure fonts are fully loaded before generating PDF
+    await page.evaluateHandle("document.fonts.ready");
+
     const pdf = await page.pdf({
       format: "A4",
       printBackground: true,
