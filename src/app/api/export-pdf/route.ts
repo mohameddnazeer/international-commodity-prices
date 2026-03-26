@@ -9,7 +9,7 @@ import { promises as fs } from "fs";
 import { NextResponse } from "next/server";
 import path from "path";
 import puppeteerCore from "puppeteer-core";
-import chromium from "@sparticuz/chromium";
+import chromium from "@sparticuz/chromium-min";
 import puppeteer from "puppeteer";
 
 export const maxDuration = 60; // Increase Vercel function timeout to 60s
@@ -395,10 +395,13 @@ export async function GET() {
         headless: true,
       });
     } else {
+      const executablePath = await chromium.executablePath(
+        "https://github.com/Sparticuz/chromium/releases/download/v131.0.1/chromium-v131.0.1-pack.tar"
+      );
       browser = await puppeteerCore.launch({
         args: chromium.args,
         defaultViewport: { width: 1920, height: 1080 },
-        executablePath: await chromium.executablePath(),
+        executablePath,
         headless: (chromium as any).headless === true ? true : "shell",
       });
     }
